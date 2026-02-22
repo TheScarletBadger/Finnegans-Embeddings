@@ -1,2 +1,3 @@
-D670MB+FW/*
-D184MB+FW/*
+textfiles/*
+*.npy
+*.model
