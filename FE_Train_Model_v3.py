@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Trains and saves finnegans model
+Trains and saves finnegan model
 """
 #from gensim.models import Word2Vec
 import nltk
@@ -9,7 +9,7 @@ from os import listdir
 from gensim.models import Word2Vec
 from multiprocessing import cpu_count
 
-#import text data into mega-string, very inneficient but this is a one off
+#import text data into mega-string, very inefficient but this is a one off...
 cores = cpu_count()
 nltk.download("punkt_tab")
 cnt = 1
@@ -49,11 +49,10 @@ f.close()
 
 print("Cleaning tokens...")
 
-#remove newline characters
-finnegan = finnegan.replace("\n", " ").lower()
-
 #remove special characters
-finnegan_cleaned = re.sub(r"[^A-Za-z\s.'-]", "", finnegan)
+finnegan_cleaned = re.sub(r"[^A-Za-z\s.']", "", finnegan)
+finnegan_cleaned = finnegan_cleaned.replace(" \n", "")
+finnegan_cleaned = finnegan_cleaned.replace("\n", " ")
 
 #split finnegans wake into list sentences
 finnegan_sentences = nltk.sent_tokenize(finnegan_cleaned)
@@ -88,7 +87,6 @@ print(model.wv.most_similar('woman'))
 print(model.wv.most_similar(positive=['he', 'woman'],negative=['male'],topn=1))
 #word arithmetic test, should return 'he' as most probable
 print(model.wv.most_similar(positive=['she', 'man'],negative=['female'],topn=1))
-
 
 testword = 'vicus'
 x = set([word for word, _ in model.wv.most_similar(testword,topn=250)])
