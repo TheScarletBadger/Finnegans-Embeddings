@@ -45,11 +45,6 @@ gutenberg_sentences = [s.replace(".", "") for s in gutenberg_sentences if s.repl
 #split each item in sentence list into list of words
 gutenberg_words = [nltk.tokenize.word_tokenize(i) for i in gutenberg_sentences if len(i) > 1]
 
-print('Removing sentences containing non-english words from the Gutenberg corpus')
-#remove non-english words
-gutenberg_words = [sen for sen in gutenberg_words if all(d.check(wrd) for wrd in sen)]
-
-
 gutenberg_set = set([wrd for sen in gutenberg_words for wrd in sen])
 
 print("Processing Finnegan's Wake")

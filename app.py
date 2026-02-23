@@ -2,6 +2,7 @@
 """
 Created on Sun Jan 25 22:42:22 2026
 """
+
 import gradio as gr
 import matplotlib.pyplot as plt
 import enchant
@@ -10,6 +11,8 @@ from sklearn.decomposition import PCA
 from gensim.models import Word2Vec
 import pandas as pd
 from numpy import sqrt
+
+gr.close_all()
 
 #load english dictionary
 d = enchant.Dict("en_GB")
@@ -39,12 +42,11 @@ def findnearest(targetword):
 with gr.Blocks() as app:
     with gr.Row():
         with gr.Column(scale=1):
-            steps = gr.Slider(1, 250, value=1, label = 'Steps')
-            reps = gr.Slider(1, 250, value=1, label = 'Replicates')
+            targetbox = gr.Textbox(label='Target Word')
             button = gr.Button(value="Start")
         with gr.Column(scale=4):
             plot1 = gr.Plot()
-    button.click(fn=randwalk, inputs=[reps,steps],outputs=plot1)
+    button.click(fn=findnearest, inputs=targetbox.value)
     
 
 app.launch(server_name="0.0.0.0", server_port= 7860)

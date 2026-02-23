@@ -29,7 +29,7 @@ pca = PCA(n_components=2)
 pca.fit(scaler.transform(model.wv.vectors))
 
 
-targetword = 'indecentexposure'
+targetword = 'test'
 targloc = pca.transform(scaler.transform(model.wv[targetword].reshape(1, -1)))
 targdf = pd.DataFrame(model.wv.most_similar(targetword,topn=10000),columns=['label','sim'])
 targdf['english'] = targdf['label'].apply(d.check)
