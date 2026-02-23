@@ -8,6 +8,10 @@ import re
 from os import listdir
 from gensim.models import Word2Vec
 from multiprocessing import cpu_count
+import enchant
+
+#load english dictionary
+d = enchant.Dict("en_GB")
 
 #import text data into mega-string, very inefficient but this is a one off...
 cores = cpu_count()
@@ -29,7 +33,7 @@ print("Cleaning and tokenizing...")
 
 #Clean up text
 gutenberg = gutenberg.replace("\n", " ").lower()
-gutenberg_cleaned = re.sub(r"[^A-Za-z\s.']", "", gutenberg)
+gutenberg_cleaned = re.sub(r"[^A-Za-z\s.]", "", gutenberg)
 gutenberg_cleaned = re.sub(r'\s+', ' ', gutenberg_cleaned)
 
 #split gutenberg corpus into list sentences
@@ -40,6 +44,11 @@ gutenberg_sentences = [s.replace(".", "") for s in gutenberg_sentences if s.repl
 
 #split each item in sentence list into list of words
 gutenberg_words = [nltk.tokenize.word_tokenize(i) for i in gutenberg_sentences if len(i) > 1]
+
+print('Removing sentences containing non-english words from the Gutenberg corpus')
+#remove non-english words
+gutenberg_words = [sen for sen in gutenberg_words if all(d.check(wrd) for wrd in sen)]
+
 
 gutenberg_set = set([wrd for sen in gutenberg_words for wrd in sen])
 
@@ -54,7 +63,7 @@ print("Cleaning and tokenizing...")
 finnegan_cleaned = finnegan.replace("- \n", "").lower()
 finnegan_cleaned = finnegan_cleaned.replace("\n", " ")
 finnegan_cleaned = re.sub(r'\s+', ' ', finnegan_cleaned)
-finnegan_cleaned = re.sub(r"[^A-Za-z\s.']", "", finnegan_cleaned)
+finnegan_cleaned = re.sub(r"[^A-Za-z\s.]", "", finnegan_cleaned)
 
 #split finnegans wake into list sentences
 finnegan_sentences = nltk.sent_tokenize(finnegan_cleaned)
