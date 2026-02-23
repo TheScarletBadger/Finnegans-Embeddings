@@ -18,6 +18,8 @@ d = enchant.Dict("en_GB")
 #load trained model from disk
 model = Word2Vec.load('finnegan.model')
 
+model.wv.save('finnegan_keyed_vectors.kv')
+
 #load list of finneganisms
 with open('finneganisms.txt') as file:
     finneganisms = [line.rstrip() for line in file]
