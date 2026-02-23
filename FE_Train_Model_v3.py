@@ -31,11 +31,15 @@ print("Cleaning tokens...")
 gutenberg = gutenberg.replace("\n", " ").lower()
 
 #remove special characters
-gutenberg_cleaned = re.sub(r"[^A-Za-z\s.'-]", "", gutenberg)
+gutenberg_cleaned = re.sub(r"[^A-Za-z\s.']", "", gutenberg)
+gutenberg_cleaned = gutenberg_cleaned.replace(" \n", "")
+gutenberg_cleaned = gutenberg_cleaned.replace("\n", " ")
 
 #split gutenberg corpus into list sentences
 gutenberg_sentences = nltk.sent_tokenize(gutenberg_cleaned)
-    
+
+#remove periods
+gutenberg_sentences = [s.replace(".", "") for s in gutenberg_sentences if s.replace(".", "") != '']
 
 #split each item in sentence list into list of words
 gutenberg_words = [nltk.tokenize.word_tokenize(i) for i in gutenberg_sentences if len(i) > 1]
@@ -57,6 +61,9 @@ finnegan_cleaned = finnegan_cleaned.replace("\n", " ")
 #split finnegans wake into list sentences
 finnegan_sentences = nltk.sent_tokenize(finnegan_cleaned)
 
+#remove periods
+finnegan_sentences = [s.replace(".", "") for s in finnegan_sentences if s.replace(".", "") != '']
+
 #split each item in sentence list into list of words
 finnegan_words = [nltk.tokenize.word_tokenize(i) for i in finnegan_sentences if len(i) > 1]
 
@@ -70,6 +77,7 @@ file.close()
 
 #merge gutenberg and finnegans wake tokens to form training corpus
 corpus = finnegan_words + gutenberg_words
+
 
 print('Training model...')    
 #initialize and train model
@@ -87,6 +95,10 @@ print(model.wv.most_similar('woman'))
 print(model.wv.most_similar(positive=['he', 'woman'],negative=['male'],topn=1))
 #word arithmetic test, should return 'he' as most probable
 print(model.wv.most_similar(positive=['she', 'man'],negative=['female'],topn=1))
+#word arithmetic test, should return 'king' as most probable
+print(model.wv.most_similar(positive=['queen', 'man'],negative=['woman'],topn=1))
+#word arithmetic test, should return 'queen' as most probable
+print(model.wv.most_similar(positive=['king', 'woman'],negative=['man'],topn=1))
 
 testword = 'vicus'
 x = set([word for word, _ in model.wv.most_similar(testword,topn=250)])
