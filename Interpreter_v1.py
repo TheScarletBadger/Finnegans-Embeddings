@@ -18,8 +18,6 @@ d = enchant.Dict("en_GB")
 #load trained model from disk
 model = Word2Vec.load('finnegan.model')
 
-model.wv.save('finnegan_keyed_vectors.kv')
-
 #load list of finneganisms
 with open('finneganisms.txt') as file:
     finneganisms = [line.rstrip() for line in file]
@@ -31,7 +29,7 @@ pca = PCA(n_components=2)
 pca.fit(scaler.transform(model.wv.vectors))
 
 
-targetword = 'test'
+targetword = 'riverrun'
 targloc = pca.transform(scaler.transform(model.wv[targetword].reshape(1, -1)))
 targdf = pd.DataFrame(model.wv.most_similar(targetword,topn=10000),columns=['label','sim'])
 targdf['english'] = targdf['label'].apply(d.check)
