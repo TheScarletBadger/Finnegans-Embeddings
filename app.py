@@ -31,14 +31,16 @@ pca = PCA(n_components=2)
 pca.fit(scaler.transform(model.vectors))
 
 def findnearest(targetword):
+    print(targetword)
     targetword = targetword.lower()
-    targloc = pca.transform(scaler.transform(model.wv[targetword].reshape(1, -1)))
-    targdf = pd.DataFrame(model.most_similar(targetword,topn=10000),columns=['label','sim'])
-    targdf['english'] = targdf['label'].apply(d.check)
-    targdf['finneganism'] = targdf['label'].isin(finneganisms)
-    targdf[["pc1","pc2"]] = pca.transform(scaler.transform(model.wv[targdf['label']]))
-    targdf["targdist"] = sqrt((targdf['pc1'] - targloc[0][0])**2 + (targdf['pc2'] - targloc[0][1])**2)
-    targdf = targdf[targdf['english'] | targdf['finneganism']]
+    targloc = pca.transform(scaler.transform(model[targetword].reshape(1, -1)))
+    targdf = pd.DataFrame(model.most_similar(targetword,topn=10000),columns=['Word','Similarity'])
+    targdf['English'] = targdf['Word'].apply(d.check)
+    targdf['Finneganism'] = targdf['Word'].isin(finneganisms)
+    targdf[["PC1","PC2"]] = pca.transform(scaler.transform(model[targdf['Word']]))
+    targdf["Distance (PC space)"] = sqrt((targdf['PC1'] - targloc[0][0])**2 + (targdf['PC2'] - targloc[0][1])**2)
+    targdf = targdf[targdf['English'] | targdf['Finneganism']]
+    print(targdf)
     return targdf
 
 
@@ -46,10 +48,9 @@ with gr.Blocks() as app:
     with gr.Row():
         with gr.Column(scale=1):
             targetbox = gr.Textbox(label='Target Word')
-            button = gr.Button(value="Start")
         with gr.Column(scale=4):
             plot1 = gr.Plot()
-    button.click(fn=findnearest, inputs=targetbox.value)
-    
+            df1 = gr.Dataframe()
+    targetbox.submit(fn=findnearest, inputs=targetbox, outputs=df1)
 
 app.launch(server_name="0.0.0.0", server_port= 7860)

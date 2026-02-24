@@ -79,7 +79,7 @@ corpus = finnegan_words + gutenberg_words
 
 print('Training model...')    
 #initialize and train model
-model = Word2Vec(vector_size=300, window=10, workers=cores, min_count=1, seed=42)
+model = Word2Vec(vector_size=250, window=10, workers=cores, min_count=1, seed=42)
 model.build_vocab(corpus)
 model.train(corpus, total_examples=len(corpus), epochs=25)
 model.save('finnegan.model')
